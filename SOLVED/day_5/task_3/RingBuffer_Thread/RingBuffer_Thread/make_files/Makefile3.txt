@@ -1,0 +1,42 @@
+
+#sa -MMD -MP kod targeta kome je .cpp zavisnost ukljucuje .h filove u make
+#kod -include inkludujemo sve file-ove iz build koji se zavrsavaju na .d
+
+all: clean makeBuild exe
+
+exe: makeExec
+	./exec
+
+
+
+
+makeExec : build/RingBuffer.o build/Semaphore.o build/main.o
+	g++ -pthread -o exec $(^)
+
+
+build/%.o : build/%.s
+	as  -o $(@) $(<)
+
+
+
+
+build/%.s : build/%.i
+	g++ -S -o $(@) $(<)
+
+
+
+build/%.i : ./cpp/%.cpp
+	cpp -MMD -MP -o $(@) $(<)
+
+
+
+
+makeBuild:
+	mkdir build
+
+
+clean:
+	rm -rf build
+
+
+-include $(wildcard build/*.d)

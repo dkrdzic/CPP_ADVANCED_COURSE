@@ -1,7 +1,6 @@
 #include "../h/RingBuffer.h"
 
 
-
 using namespace std;
 
 

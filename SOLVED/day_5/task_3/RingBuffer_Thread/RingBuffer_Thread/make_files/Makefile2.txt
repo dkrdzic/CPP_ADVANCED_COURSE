@@ -1,0 +1,38 @@
+
+# sa %.o : %s kazemo da svi filovi koji se zavrsavjau na .o nastaju od .s filova sa istim imenom ko i oni
+
+all:clean makeBuild exe
+
+exe: makeExec
+	./exec
+
+
+
+
+makeExec : build/RingBuffer.o build/Semaphore.o build/main.o
+	g++ -pthread -o exec $(^)
+
+
+build/%.o : build/%.s
+	as -o $(@) $(<)
+
+
+
+
+build/%.s : build/%.i
+	g++ -S -o $(@) $(<)
+
+
+
+build/%.i : ./cpp/%.cpp
+	cpp -o $(@) $(<)
+
+
+
+
+makeBuild:
+	mkdir build
+
+
+clean:
+	rm -rf build

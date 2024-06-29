@@ -1,0 +1,60 @@
+
+all: clean makeBuild exe
+
+exe: makeExec
+	./exec
+
+
+
+#link: assembler
+#	ld -o exec3 ./build/RingBuffer.o ./build/Semaphore.o ./build/main.o
+
+makeExec: assembler
+	g++ ./build/RingBuffer.o ./build/Semaphore.o ./build/main.o  -pthread -o exec
+
+
+assembler: assemblerMain assemblerSemaphore assemblerRingBuffer 
+
+assemblerRingBuffer: compileRingBuffer 
+	as  ./build/RingBuffer.s -o ./build/RingBuffer.o 
+
+assemblerSemaphore: compileSemaphore 
+	as  ./build/Semaphore.s -o ./build/Semaphore.o 
+
+assemblerMain: compileMain 
+	as  ./build/main.s -o ./build/main.o 
+
+
+
+
+compileRingBuffer:	macroprocessRingBuffer 
+	g++ -S ./build/RingBuffer.i -o ./build/RingBuffer.s
+
+compileSemaphore: macroprocessSemaphore build
+	g++ -S ./build/Semaphore.i -o ./build/Semaphore.s
+
+compileMain: macroprocessMain build
+	g++ -S ./build/main.i -o ./build/main.s
+
+
+
+
+
+
+macroprocessRingBuffer: 
+	cpp ./cpp/RingBuffer.cpp  -o ./build/RingBuffer.i 
+
+macroprocessSemaphore: 
+	cpp ./cpp/Semaphore.cpp  -o ./build/Semaphore.i 
+
+macroprocessMain:
+	cpp ./cpp/main.cpp  -o ./build/main.i
+
+
+
+makeBuild:
+	mkdir build
+
+
+clean:
+	rm -rf build
